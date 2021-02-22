@@ -1,0 +1,182 @@
+@import "loader.scss";
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap");
+
+*, *:before, *:after {
+  box-sizing: border-box;
+}
+
+.wrapper {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2em 1em;
+}
+
+::-webkit-input-placeholder {
+  /* WebKit browsers */
+  color: grey;
+}
+
+:-moz-placeholder {
+  /* Mozilla Firefox 4 to 18 */
+  color: grey;
+}
+
+::-moz-placeholder {
+  /* Mozilla Firefox 19+ */
+  color: grey;
+}
+
+:-ms-input-placeholder {
+  /* Internet Explorer 10+ */
+  color: grey;
+}
+
+.form__row {
+  overflow: visible;
+}
+.form__row + .form__row {
+  margin-top: 1em;
+}
+.form__label {
+  display: block;
+  margin-bottom: 0.5em;
+}
+.form__row--error .form__label {
+  color: red;
+}
+.form__field {
+  background-color: white;
+  box-shadow: none;
+  border: 1px solid;
+  padding: 0.8em 1em;
+  font-size: 16px;
+  font-weight: normal;
+  width: 100%;
+  transition: all 300ms ease-in-out;
+}
+.form__field:hover, .form__field:focus {
+  outline: none;
+}
+.form__field.is-error {
+  box-shadow: inset 0 0 0 1px red;
+  border-color: red;
+}
+.form__field[type=color] {
+  width: 2em;
+  height: 2em;
+  padding: 0.25em;
+}
+.form__field--textarea {
+  resize: vertical;
+}
+.form__row--error .form__field, .form__row--error .form__field:focus, .form__field.error {
+  box-shadow: inset 0 0 0 1px red;
+  border-color: red;
+}
+.form__msg {
+  display: none;
+}
+.form__row--error .form__msg {
+  display: block;
+  color: red;
+}
+.form__action {
+  margin-top: 2em;
+}
+
+.chkrad__field {
+  display: inline-block;
+  margin-right: 1em;
+}
+.chkrad__field--error {
+  border: 0;
+  box-shadow: none;
+}
+.chkrad__label {
+  display: inline-block;
+}
+
+.errors-list {
+  list-style-type: none;
+  color: red;
+  font-size: 0.9em;
+  padding: 0;
+  margin: 0;
+}
+
+.custom-select {
+  padding: 0;
+  position: relative;
+}
+.custom-select:after {
+  content: "▼";
+  position: absolute;
+  width: 2em;
+  height: 2em;
+  top: 50%;
+  margin: auto 0;
+  right: 0;
+  background-size: 100% auto;
+  z-index: 2;
+  pointer-events: none;
+  transform: translateY(-25%);
+}
+.custom-select__field {
+  background: none repeat scroll 0% 0% transparent;
+  border: 1px solid transparent;
+  border-radius: 0px;
+  outline: medium none;
+  width: 100%;
+  width: calc(100% + 3em);
+  padding: 0.8em 1em;
+  margin: 0;
+  font-size: 16px;
+  -webkit-appearance: none;
+}
+.custom-select__field:focus {
+  width: 100%;
+  outline: none;
+}
+
+/* ------------------------------------  */
+/* START OF UGLY BROWSER-SPECIFIC HACKS */
+/* ----------------------------------  */
+/* OPERA - Pre-Blink nix the custom arrow, go with a native select button to keep it simple. Targeted via this hack http://browserhacks.com/#hack-a3f166304aafed524566bc6814e1d5c7 */
+x:-o-prefocus,
+.select-wrap::after {
+  display: none;
+}
+
+/* IE 10/11+ - This hides native dropdown button arrow so it will have the custom appearance, IE 9 and earlier get a native select - targeting media query hack via http://browserhacks.com/#hack-28f493d247a12ab654f6c3637f6978d5 - looking for better ways to achieve this targeting */
+/* The second rule removes the odd blue bg color behind the text in the select button in IE 10/11 and sets the text color to match the focus style's - fix via http://stackoverflow.com/questions/17553300/change-ie-background-color-on-unopened-focused-select-box */
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+  .custom-select__field::-ms-expand {
+    display: none;
+  }
+
+  .custom-select__field:focus::-ms-value {
+    background: transparent;
+  }
+}
+/* FIREFOX won't let us hide the native select arrow, so we have to make it wider than needed and clip it via overflow on the parent container. The percentage width is a fallback since FF 4+ supports calc() so we can just add a fixed amount of extra width to push the native arrow out of view. We're applying this hack across all FF versions because all the previous hacks were too fragile and complex. You might want to consider not using this hack and using the native select arrow in FF. Note this makes the menus wider than the select button because they display at the specified width and aren't clipped. Targeting hack via http://browserhacks.com/#hack-758bff81c5c32351b02e10480b5ed48e */
+/* Show only the native arrow */
+@-moz-document url-prefix() {
+  .custom-select {
+    overflow: hidden;
+  }
+
+  .custom-select__field {
+    width: 120%;
+    width: calc(100% + em);
+  }
+}
+/* Firefox focus has odd artifacts around the text, this kills that. See https://developer.mozilla.org/en-US/docs/Web/CSS/:-moz-focusring */
+.custom-select__field:-moz-focusring {
+  color: transparent;
+  text-shadow: 0 0 0 #000;
+}
+
+/* ------------------------------------  */
+/*  END OF UGLY BROWSER-SPECIFIC HACKS  */
+/* ------------------------------------  */

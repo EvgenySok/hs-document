@@ -1,0 +1,6 @@
+node_modules
+yarn-error.log
+readme.txt
+discription.txt
+dist
+.env
