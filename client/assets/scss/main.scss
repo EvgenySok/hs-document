@@ -168,7 +168,7 @@ x:-o-prefocus,
 
   .custom-select__field {
     width: 120%;
-    width: calc(100% + em);
+    // width: calc(100% + em);
   }
 }
 /* Firefox focus has odd artifacts around the text, this kills that. See https://developer.mozilla.org/en-US/docs/Web/CSS/:-moz-focusring */
