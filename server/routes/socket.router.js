@@ -9,21 +9,25 @@ const returnRouter = (io) => {
     date: '',
     text: ''
   }
+  console.log('document:', document)
+
   // ================================================================================================
   io.on('connection', (socket) => {
     const userId = socket.id
     usersOnline.push(userId)
     socket.emit('get document', JSON.stringify(document))
-    socket.broadcast.emit('new user', userId)
+    // socket.broadcast.emit('new user', userId)
     console.log('connected id:', { userId })
+    console.log('document:', document)
 
     // ================================================================================================
     socket.on('change', (data) => {
-      const { fieldName, value } = JSON.parse(data)
-      document = { ...document, [fieldName]: value }
-      console.log('console:', fieldName, value, document)
-
-      io.emit('change field', data)
+      if (data) {
+        const dataWithUserId = data.map(it => ({ ...it, userId }))
+        console.log('console:', dataWithUserId)
+        
+        socket.broadcast.emit('change', dataWithUserId)
+      }
     })
     // ================================================================================================
 

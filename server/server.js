@@ -19,7 +19,7 @@ const app = server.listen(PORT, () => {
 })
 const io = socketIo(app)
 
-server.use('/socket.io', socketRouter(io)) 
+server.use('/socket.io', socketRouter(io))
 server.use('/api/v1', documentRouter)
 
 
