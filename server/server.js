@@ -14,6 +14,8 @@ server.use(express.static(resolve(__dirname, '../dist')))
 server.use(bodyParser.json())
 server.use(bodyParser.urlencoded({ extended: true }))
 
+server.use('/api/v1/auth', require('./routes/signIn'))
+
 const app = server.listen(PORT, () => {
   console.log(`Server has been started at http://localhost:${PORT}...`)
 })

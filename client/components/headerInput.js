@@ -2,9 +2,6 @@ import React from 'react'
 
 const HeaderInput = ({ header, setHeader }) => {
 
-
-
-
   return (
     <div className="form__row">
       <label htmlFor="header" className="form__label">Header input</label>

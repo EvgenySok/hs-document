@@ -1,8 +1,21 @@
+@import url("https://fonts.googleapis.com/css?family=Open+Sans&display=swap");
+
+$fontfamily: "Open Sans";
+
+$minViewportWidth: 320;
+$maxViewportWidth: 1280; // for adaptive fs
+
+$backgroundModified: rgba(18, 202, 202, 0.24);
+
+// @import "nullstyle.scss";
 @import "loader.scss";
+@import "signIn.scss";
 
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap");
 
-*, *:before, *:after {
+*,
+*:before,
+*:after {
   box-sizing: border-box;
 }
 
@@ -10,6 +23,7 @@
   max-width: 600px;
   margin: 0 auto;
   padding: 2em 1em;
+  position: relative;
 }
 
 ::-webkit-input-placeholder {
@@ -57,23 +71,25 @@
   width: 100%;
   transition: all 300ms ease-in-out;
 }
-.form__field:hover, .form__field:focus {
+.form__field:hover,
+.form__field:focus {
   outline: none;
 }
 .form__field.is-error {
   box-shadow: inset 0 0 0 1px red;
   border-color: red;
 }
-.form__field[type=color] {
+.form__field[type="color"] {
   width: 2em;
   height: 2em;
   padding: 0.25em;
 }
 .form__field--textarea {
   resize: vertical;
-
 }
-.form__row--error .form__field, .form__row--error .form__field:focus, .form__field.error {
+.form__row--error .form__field,
+.form__row--error .form__field:focus,
+.form__field.error {
   box-shadow: inset 0 0 0 1px red;
   border-color: red;
 }
@@ -184,19 +200,52 @@ x:-o-prefocus,
 /*  END OF UGLY BROWSER-SPECIFIC HACKS  */
 /* ------------------------------------  */
 
-
-.test_wrapper{
+.test_wrapper {
   position: relative;
-  .test_textAria{
+  .test_textAria {
     position: absolute;
     top: 0;
     left: 0;
     // background-color: rgba(0, 0, 0, 0);
     // z-index: 5555;
   }
-  .span_caret{
-    position: absolute;
-    background-color: rgba(0, 0, 0, 0.24);
 
+  .span_caret {
+    position: absolute;
+    background-color: $backgroundModified;
+    z-index: 1;
+  }
+}
+.fake__textarea {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  .form__field {
+    opacity: 0;
+  }
+}
+.user__list {
+  margin: 30px;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.sign {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.blink_me {
+  animation: blinker 1s linear infinite;
+}
+.modified {
+  background: $backgroundModified;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
   }
 }

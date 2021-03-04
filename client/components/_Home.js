@@ -1,21 +1,26 @@
 import React, { useState, useEffect, useRef } from 'react'
 import io from 'socket.io-client'
 import HeaderInput from './headerInput'
-import SelectTypeDocument from './selectTypeDoc'
+import SelectInput from './selectInput'
 import DateInput from './dateInput'
 import TextInput from './textInput'
 import Loader from './loader'
-import { changeHandler } from '../functions'
 
-
+import ListUsers from './listUsers'
+import changeHandler from '../functions/change_handler'
 
 let socket
 
-const Home = () => {
+const Home = (props) => {
+  const [currentUser, setCurrentUsers] = useState('')
   const [isDocumentLoaded, setIsDocumentLoaded] = useState(false)
+  const [users, setUsers] = useState([])
+  const [delUsers, setDelUsers] = useState([])
+  const [addUser, setAddUser] = useState([])
 
   const [accumulatorChange, setAccumulatorChange] = useState([])
   const [changeFromSocket, setChangeFromSocket] = useState([])
+  const [lastModified, setLastModified] = useState({ field: '', user: '' })
   const [header, setHeader] = useState('')
   const [select, setSelect] = useState('')
   const [date, setDate] = useState('')
@@ -23,81 +28,117 @@ const Home = () => {
   const refText = useRef()
 
   useEffect(() => {
+    setCurrentUsers(props.location.user)
+
     if (typeof socket === 'undefined') {
       socket = io(window.location.origin)
       socket.on('connect', () => {
         console.log(`connection established socket.id: ${socket.id}`)
+        socket.emit('get current user', props.location.user)
       })
       socket.on('get document', (data) => {
-        const doc = JSON.parse(data)
-        setHeader(doc.header)
-        setSelect(doc.select)
-        setDate(doc.date)
-        setText(doc.text)
+        setHeader(data.header)
+        setSelect(data.select)
+        setDate(data.date)
+        setText(data.text)
         setIsDocumentLoaded(true)
+      })
+      socket.on('get users', (usersOnline) => {
+        setUsers(usersOnline)
+      })
+      socket.on('user connected', (userId) => {
+        setAddUser(userId)
+      })
+      socket.on('user disconnected', (userId) => {
+        setDelUsers(userId)
       })
       socket.on('change', (data) => {
         setChangeFromSocket(data)
       })
     }
+
   }, [])
 
   useEffect(() => {
-    console.log('console:', isDocumentLoaded, accumulatorChange.length)
+    if (delUsers) {
+      setUsers([...users.filter(user => user !== delUsers)])
+      setDelUsers('')
+    }
+    if (addUser) {
+      setUsers([...users, addUser])
+      setAddUser('')
+    }
     if (isDocumentLoaded && accumulatorChange.length) {
       socket.emit('change', accumulatorChange)
       setAccumulatorChange([])
     }
-  }, [accumulatorChange])
+  }, [accumulatorChange, delUsers, addUser])
 
-useEffect(() => {
-  changeFromSocket.forEach((oneСhange) => {
-    switch (oneСhange.inputName) {
-      case 'text': {
-        const newText = changeHandler(oneСhange, text)
-        setText(newText)
-        break
+  useEffect(() => {
+    changeFromSocket.forEach((oneСhange) => {
+      switch (oneСhange.inputName) {
+        case 'text': {
+          const newValue = changeHandler(oneСhange, text)
+          setText(newValue)
+          break
+        }
+        // case 'header': {
+        //     setHeader(fieldValue)
+        //     break
+        // } 
+        case 'select': {
+          setSelect(oneСhange.value)
+          break
+        } case 'date': {
+          setDate(oneСhange.value)
+          break
+        }
+        default:
+          break
       }
-      // case 'header': {
-      //     setHeader(fieldValue)
-      //     break
-      //   } case 'select': {
-      //     setSelect(fieldValue)
-      //     break
-      //   } case 'date': {
-      //     setDate(fieldValue)
-      //     break
-      //   }
-      default:
-        break
-    }
-  })
-}, [changeFromSocket])
-  
+      setLastModified(oneСhange)
+    })
+  }, [changeFromSocket])
+
 
 
   return (
-    <div className="wrapper">
-      <h1>Creating a HS document</h1>
-      {isDocumentLoaded ?
-        <form className="" action="" method="post" data-validate>
-          <HeaderInput header={header} setHeader={setHeader} />
-          <SelectTypeDocument select={select} setSelect={setSelect} />
-          <DateInput date={date} setDate={setDate} />
-          <TextInput
-            text={text}
-            setText={setText}
-            refText={refText}
-            setAccumulatorChange={setAccumulatorChange}
-            accumulatorChange={accumulatorChange}
-            changeFromSocket={changeFromSocket}
-          />
-          <div className="form__action">
-            <button type="submit">Submit</button>
-          </div>
-        </form> :
-        <Loader />}
-    </div>
+    <>
+      <div className="wrapper">
+        <h1>Creating a HS document</h1>
+        {isDocumentLoaded ?
+          <form className="" action="" method="post" data-validate>
+            <HeaderInput header={header} setHeader={setHeader} />
+            <SelectInput
+              select={select}
+              setSelect={setSelect}
+              accumulatorChange={accumulatorChange}
+              setAccumulatorChange={setAccumulatorChange}
+              lastModified={lastModified} />
+            <DateInput
+              date={date}
+              setDate={setDate}
+              accumulatorChange={accumulatorChange}
+              setAccumulatorChange={setAccumulatorChange}
+              lastModified={lastModified} />
+            <TextInput
+              text={text}
+              setText={setText}
+              refText={refText}
+              setAccumulatorChange={setAccumulatorChange}
+              accumulatorChange={accumulatorChange}
+              changeFromSocket={changeFromSocket}
+              currentUser={currentUser}
+              lastModified={lastModified}
+            />
+            <div className="form__action">
+              <button type="submit">Submit</button>
+            </div>
+          </form> :
+          <Loader />}
+      </div>
+      <ListUsers users={users} currentUser={currentUser} />
+    </>
   )
 }
 
