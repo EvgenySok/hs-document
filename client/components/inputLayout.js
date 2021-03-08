@@ -4,7 +4,7 @@ import { defineCaretPosition } from '../functions/define_caret_position'
 import { inputMethods } from '../functions/input_methods'
 
 
-const TextInput = ({ text, setText, setAccumulatorChange, accumulatorChange, changeFromSocket, lastModified }) => {
+const InputLayout = ({ text, setText, setAccumulatorChange, accumulatorChange, changeFromSocket, lastModified, inputLayoutId, rows, cols }) => {
   const [selectedText, setSelectedText] = useState('')
   const [caretPosition, setCaretPosition] = useState(0)
   const [topPos, setTopPos] = useState(0)
@@ -29,8 +29,10 @@ const TextInput = ({ text, setText, setAccumulatorChange, accumulatorChange, cha
       if (change) {
         const newPos = defineCaretPosition(change, caretPosition)
         setCaretPosition(newPos)
-        if (change.inputName === 'text') {
+        if (change.inputName === inputLayoutId) {
           const { top, left } = change
+          console.log('top, left :', top, left, lastModified.inputName, topPos !== 0, lastModified.inputName === { inputLayoutId })
+
           setTopPos(top)
           setLeftPos(left)
         }
@@ -49,31 +51,30 @@ const TextInput = ({ text, setText, setAccumulatorChange, accumulatorChange, cha
 
   return (
     <div className="form__row " >
-      <label htmlFor="text" className="form__label ">Text input</label>
+      <label htmlFor={inputLayoutId} className="form__label ">{`${inputLayoutId} input`}</label>
       <div className="test_wrapper">
 
         <textarea
           value={text || ''}
           onChange={(e) => textChangeHandler(e)}
           onMouseUp={(e) => {
-            const selected = inputMethods.getSelectedText
-
+            const selected = inputMethods.getSelectedText()
             setSelectedText(selected)
-            if (typeof selected === 'undefined') {
+            if (selected === '') {
               setCaretPosition(e.target.selectionEnd)
             }
           }}
-          onDoubleClick={() => setSelectedText(inputMethods.getSelectedText)}
+          onDoubleClick={() => setSelectedText(inputMethods.getSelectedText())}
           ref={refText}
           type="text"
-          name="text"
-          id="text"
+          name={inputLayoutId}
+          id={inputLayoutId}
           className="form__field"
-          rows="4"
-          cols="50" />
+          rows={rows}
+          cols={cols} />
 
         {topPos !== 0
-          && lastModified.inputName === 'text'
+          && lastModified.inputName === inputLayoutId
           && <span
             className="span_caret blink_me"
             style={{ top: topPos, left: leftPos }}
@@ -85,4 +86,4 @@ const TextInput = ({ text, setText, setAccumulatorChange, accumulatorChange, cha
   )
 }
 
-export default TextInput
+export default InputLayout

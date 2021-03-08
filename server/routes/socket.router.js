@@ -1,7 +1,6 @@
 const express = require('express')
 const changeHandler = require('../../client/functions/change_handler')
 const router = express.Router()
-const { readFile } = require('fs').promises
 
 const returnRouter = (io) => {
   let usersOnline = []
@@ -30,15 +29,17 @@ const returnRouter = (io) => {
     // ================================================================================================
     socket.on('change', (data) => {
       if (data) {
-        clearTimeout(equalize)
+        // clearTimeout(equalize)
         const dataWithUserId = data.map(it => ({ ...it, user }))
         console.log('console:', dataWithUserId)
         socket.broadcast.emit('change', dataWithUserId)
         document = updateDocument(document, data)
-        equalize = setTimeout((document) => {
-          io.emit("get document", document);
-          console.log('tick')
-        }, 500, document)
+        console.log('document:', document)
+
+        // equalize = setTimeout((document) => {
+        //   io.emit("get document", document);
+        //   console.log('tick')
+        // }, 500, document)
       }
     })
     // ================================================================================================
@@ -59,9 +60,11 @@ function updateDocument(doc, data) {
       case 'text': {
         const newValue = changeHandler(oneСhange, doc.text)
         doc = { ...doc, text: newValue }
+        break
       }
       case 'header': {
-
+        const newValue = changeHandler(oneСhange, doc.header)
+        doc = { ...doc, header: newValue }
         break
       } case 'select': {
         doc = { ...doc, select: oneСhange.value }
@@ -74,5 +77,6 @@ function updateDocument(doc, data) {
         break
     }
   })
+
   return doc
 }

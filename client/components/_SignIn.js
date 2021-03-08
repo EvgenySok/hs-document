@@ -20,7 +20,6 @@ const SignIn = () => {
               user: errorsFromServer.user
             }), 1000)
           }
-          // console.log('errorsFromServer:', formikRef.current)
         }
 
         formikRef.current.setSubmitting(false)

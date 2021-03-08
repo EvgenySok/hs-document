@@ -11,6 +11,7 @@ webpackPrefetch: true
 const PrivateRoute = ({ component: Component, ...rest }) => {
   const func = (props) =>
   rest.location.user ? <Component {...props} /> : <Redirect to={{ pathname: '/signin' }} />
+  // true ? <Component {...props} /> : <Redirect to={{ pathname: '/signin' }} />
   return <Route {...rest} render={func} />
 }
 

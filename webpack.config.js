@@ -78,7 +78,6 @@ const config = {
             loader: MiniCssExtractPlugin.loader,
             options: {
               publicPath: '../',
-              // hmr: isDev,
             },
           },
           'css-loader',
@@ -86,7 +85,7 @@ const config = {
             loader: 'postcss-loader',
             options: {
               ident: 'postcss',
-              // plugins: [ require('autoprefixer')],
+              plugins: [ require('autoprefixer')],
             },
           },
           'sass-loader',

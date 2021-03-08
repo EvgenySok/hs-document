@@ -1,9 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import io from 'socket.io-client'
-import HeaderInput from './headerInput'
+// import HeaderInput from './headerInput'
 import SelectInput from './selectInput'
 import DateInput from './dateInput'
 import TextInput from './textInput'
+import InputLayout from './inputLayout'
+
 import Loader from './loader'
 
 import ListUsers from './listUsers'
@@ -25,7 +27,6 @@ const Home = (props) => {
   const [select, setSelect] = useState('')
   const [date, setDate] = useState('')
   const [text, setText] = useState('')
-  const refText = useRef()
 
   useEffect(() => {
     setCurrentUsers(props.location.user)
@@ -82,10 +83,11 @@ const Home = (props) => {
           setText(newValue)
           break
         }
-        // case 'header': {
-        //     setHeader(fieldValue)
-        //     break
-        // } 
+        case 'header': {
+          const newValue = changeHandler(oneСhange, header)
+          setHeader(newValue)
+          break
+        }
         case 'select': {
           setSelect(oneСhange.value)
           break
@@ -108,7 +110,18 @@ const Home = (props) => {
         <h1>Creating a HS document</h1>
         {isDocumentLoaded ?
           <form className="" action="" method="post" data-validate>
-            <HeaderInput header={header} setHeader={setHeader} />
+            {/* <HeaderInput header={header} setHeader={setHeader} /> */}
+            <InputLayout
+              text={header}
+              setText={setHeader}
+              setAccumulatorChange={setAccumulatorChange}
+              accumulatorChange={accumulatorChange}
+              changeFromSocket={changeFromSocket}
+              currentUser={currentUser}
+              lastModified={lastModified}
+              inputLayoutId='header'
+              rows={1}
+              cols={50} />
             <SelectInput
               select={select}
               setSelect={setSelect}
@@ -124,7 +137,6 @@ const Home = (props) => {
             <TextInput
               text={text}
               setText={setText}
-              refText={refText}
               setAccumulatorChange={setAccumulatorChange}
               accumulatorChange={accumulatorChange}
               changeFromSocket={changeFromSocket}
